@@ -14,7 +14,7 @@ import (
 func getTOTP(secretKey string, timestamp int64) string {
 	// the secret key is in base32, so we may decode it first
 	key, err := base32.StdEncoding.DecodeString(strings.ToUpper(secretKey))
-	check(err)
+	Check(err)
 	//in this point, we know 'key' is an array of 20 bytes
 	binaryTimestamp := make([]byte, 8)
 	binary.BigEndian.PutUint64(binaryTimestamp, uint64(timestamp))
@@ -25,7 +25,7 @@ func getTOTP(secretKey string, timestamp int64) string {
 	var header uint32
 	reader := bytes.NewReader(hash[offset : offset+4])
 	err = binary.Read(reader, binary.BigEndian, &header)
-	check(err)
+	Check(err)
 	h12 := (int(header) & 0x7fffffff) % 1000000 //Converts number as a string
 	otp := strconv.Itoa(int(h12))
 	return otp
@@ -37,7 +37,8 @@ func GetTOTP(secretKey string) string {
 	return getTOTP(secretKey, interval)
 }
 
-func check(e error) {
+// Check validates if an error exists
+func Check(e error) {
 	if e != nil {
 		panic(e)
 	}
